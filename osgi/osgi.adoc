@@ -2,7 +2,7 @@
 From OSGi in Action - 2011
 :toc:
 
-== Why use OSGi?
+== Chapter1: Why use OSGi?
 
 It is used to address the lack of modularity in the Java platform.
 
@@ -115,7 +115,7 @@ For other modules to define a dependency on another module:
 
 ----
 [...]
-Import-Package: org.foo.hello;version="[1.0, 2.0)]"
+Import-Package: org.foo.hello;version="[1.0, 2.0)"
 ----
 
 
@@ -149,3 +149,136 @@ Import-Package: org.osgi.framework              <1>
 
 
 ==== Service layer example
+You could achieve this by writing an interface to your implementation. Then to
+link the service (interface) to the implementation (or publish the service), in
+your Activator, do this:
+
+[source,java]
+----
+public class Activator implements BundleActivator {
+    public void start(BundleContext ctx) {
+        ctx.registerService(Greeting.class.getName(),
+            new GreetingImpl("service"), null);
+    }
+}
+----
+
+To discover a service:
+
+[source,java]
+----
+public class Client implements BundleActivator {
+    public void start(BundleContext ctx) {
+        ServiceReference ref =
+        ctx.getServiceReference(Greeting.class.getName());      <1>
+
+        ((Greeting) ctx.getService(ref)).sayHello();            <2>
+    }
+}
+----
+<1> Get an indirect reference from service registry
+<2> Indirect reference used to access object instance.
+
+This is done (use indirect reference) since services may be unregistered
+dynamically. Holding a direct reference will prevent garbage collection of
+uninstalled bundles.
+
+
+== Chapter2: Modularity
+The module layer is the foundation on which everything else rests in the OSGi
+world.
+
+=== Modularity and Object Orientation
+Modules encapsulate classes, allowing you to express the logical relationship
+among the classes.
+
+Logical Modularity:: Code visibility
+Physical Modularity:: How code is packaged
+
+In OSGi, a logical module is referred to as a bundle, and so is the physical
+module (jar).
+
+
+=== OSGi Human Readable metadata
+----
+Bundle-Name: haha
+Bundle-Description: boo
+Bundle-DocURL: here
+Bundle-Category: example, library
+Bundle-Vendor: boo
+Bundle-ContactAddress: 1212
+Bundle-Copyright: OSGi
+----
+
+=== Bundle identification
+`Bundle-SymbolicName` and `Bundle-Version` are intended for the OSGi framework
+to help uniquely identify a bundle.
+
+==== Code visibility
+Standard jar files typically fail as bundles since they were written under the
+assumption of global type visibility.
+
+Internal bundle class path:: code forming the Bundle
+
+Exported internal code:: explicitly exposed code from bundle class path for
+sharing
+
+Imported external code:: External code on which the bundle class path code
+depends
+
+==== Bundle class path
+Bundle class path is a list of locations to search for classes. Difference with
+java class path is that the bundle class path refers to locations inside the
+bundle Jar file.
+
+When a bundle class needs another class in the same bundle, the bundle class
+path of the containing bundle is searched to find the class (instead of all the
+directories inside the jar)
+
+----
+Bundle-ClassPath: .,other-classes/,embedded.jar     <1>
+----
+
+<1> This tells the OSGi framework to search the bundle jar file, then in the
+folder called `other-classes`, then, in the embedded jar in the bundle.
+
+If you don't specify a value, the framework supplies a default value of period
+(.) .
+
+The bundle class path value of . ocrresponds to the internal search policy of
+standard Jar files.
+
+
+==== Export internal Code
+Used for exposing the public API of the code contained in the Jar file.
+
+Export-Package:: A comma-separated list of internal bundle packages to expose
+for sharing with other bundles.
+
+
+You can also attach attributes to exported packages. A given bundle can use
+attributes to differentiate its exports from other bundles.
+
+e.g
+----
+Export-Package: org.foo.shape; vendor="haha", org.foo.other; vendor="haha" <1>
+Export-Package: org.foo.shape; org.foo.other; vendor="haha" <2>
+----
+<2> is the shorthand notation for <1>
+
+
+----
+Export-Package: org.foo.shape; version="2.0.0" <1>
+----
+<1> OSGi supports the notion of package versioning
+
+
+==== Import external code
+----
+Import-Package: org.foo.shape,org.foo.shape.other
+Import-Package: org.foo.shape; org.foo.shape.other; version="1.3.0"
+Import-Package: org.foo.shape; org.foo.shape.other; version="[1.3.0,2.0.0]" <1>
+----
+<1> You can specify a range on the version!
+
+2.5.4
