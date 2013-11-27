@@ -49,11 +49,11 @@ The sservices define APIs for common tasks, such as logging and preferences.
 
 === OSGi layers
 * Module layer
-  +
-  Concerned with packaging
++
+Concerned with packaging
 * Lifecycle layer
-  +
-  Providing module management and access to the OSGi framewrk
++
+Providing module management and access to the OSGi framewrk
 * Service layer
-  +
-  Interaction and communication among modules
++
+Interaction and communication among modules
