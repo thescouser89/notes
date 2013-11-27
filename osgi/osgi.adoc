@@ -27,3 +27,33 @@ you'll break the logical structure of your application.
 ==== Classpath
 The Java classpath does not pay any attention to code versions - it uses the
 first version it finds.
+
+Classpath hell:: More than one Jar file provides a given set of classes
+
+You might suffer frm `NoSuchMethodError` when a class from one Jar file uses a
+class with a different version from what it was expecting.
+
+In large application, it isn't uncommon to have dependencies on different
+versions of the same component.
+
+==== Deployment and Management
+There is no easy way to evolve your application and its components after
+deployment. (e.g dynamic plugin mechanism)
+
+=== Overview of OSGi
+* OSGi framework
+* OSGi standard services
+
+The framework is the runtime and implements the OSGI functionality.
+The sservices define APIs for common tasks, such as logging and preferences.
+
+=== OSGi layers
+* Module layer
+  +
+  Concerned with packaging
+* Lifecycle layer
+  +
+  Providing module management and access to the OSGi framewrk
+* Service layer
+  +
+  Interaction and communication among modules
