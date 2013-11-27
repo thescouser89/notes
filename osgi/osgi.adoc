@@ -1,0 +1,29 @@
+= OSGi Notes
+From OSGi in Action - 2011
+:toc:
+
+== Why use OSGi?
+
+It is used to address the lack of modularity in the Java platform.
+
+Referred to as _SOA in a VM_.
+
+=== What is modularity?
+Code is separated into logical parts that have their own roles.
+
+=== Java's limitations
+==== Access Modifier
+Java's access modifiers are good for low-level object-oriented aspects but does
+not cater for modules.
+
+Java uses a package to partition code, however for a code to be visible from one
+package to another, it has to be defined as _public_. This makes those packages
+also available to _everyone_. This will expose implementation details, and make
+future refactorings harder as users may tend to rely on nonpublic API.
+
+You could fix it by putting unrelated classes together in the same package, but
+you'll break the logical structure of your application.
+
+==== Classpath
+The Java classpath does not pay any attention to code versions - it uses the
+first version it finds.
