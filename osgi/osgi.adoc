@@ -57,3 +57,95 @@ Providing module management and access to the OSGi framewrk
 * Service layer
 +
 Interaction and communication among modules
+
+
+==== Module layers
+Bundle:: Jar file with extra metadata. A bundle is also the OSGi module concept.
+
+A bundle will contains all the typical stuff you will expect in a jar file
+(class files and resources). Bundles are logical modules that combine to form a
+given application. Bundles can declare which packages should be visible to other
+bundles. So we don't suffer anymore from the problem of access modifiers and
+different packages.
+
+You can also declare which external packages the bundles depend on.
+
+Advantage of doing this is that the OSGi framework can then manage the versions
+by themselves; we avoid the classpath problem.
+
+==== Lifecycle layer
+This layer defines how the bundles are managed in the framework.
+
+Bundle lifecycle::
+* install
+* update
+* start
+* stop
+* uninstall
+
+Lifecycle layer also defines how bundles gain access to their execution context.
+The context allows the bundles to talk to the OSGi framework and use the
+facilities it provides during execution.
+
+==== Service layer
+Service providers publish their services into a service registry, while service
+clients search the registry to find available services to use.
+
+The service layer promotes an interface-bsed development approach.
+
+=== Putting all together
+Metadata to add to `META-INF/MANIFEST.MF`:
+
+----
+Bundle-ManifestVersion: 2                       <1>
+Bundle-Name: Greeting API                       <2>
+Bundle-SymbolicName: org.foo.hello              <3>
+Bundle-Version: 1.0                             <4>
+Export-Package: org.foo.hello;version="1.0"     <5>
+----
+<1> OSGi metadata syntax version
+<2> Human-readable Name
+<3> Symbolic Name
+<4> versions
+<5> Important part: extends the functionality of a typical jar file so that you
+can declare which packages in the jar are visible to its users. Only contents in
+`org.foo.hello` are externally visible.
+
+For other modules to define a dependency on another module:
+
+----
+[...]
+Import-Package: org.foo.hello;version="[1.0, 2.0)]"
+----
+
+
+==== Lifecycle example
+
+[source,java]
+----
+public class Activator implements BundleActivator {
+    public void start(BundleContext ctx) {
+        // initialize
+    }
+    public void stop(BundleContext ctx) {
+        // stop
+    }
+}
+----
+
+Since the framework uses the same activator instance while the bundle is active,
+we can share variables between `start` and `stop`.
+
+`BundleContext` allows us to get access to the OSGi framework.
+
+To tell the framework about the bundle activator, you have to add this to your
+manifest:
+
+----
+Bundle-Activator: org.foo.hello.Activator
+Import-Package: org.osgi.framework              <1>
+----
+<1> We need this since the bundle activator has a dependency on it.
+
+
+==== Service layer example
