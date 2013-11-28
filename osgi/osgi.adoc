@@ -281,4 +281,29 @@ Import-Package: org.foo.shape; org.foo.shape.other; version="[1.3.0,2.0.0]" <1>
 ----
 <1> You can specify a range on the version!
 
-2.5.4
+=== Class-search order
+When a bundle needs a class at execution time, framework searches for class in
+this order:
+
+* If package starts with `java`, ask the parent classloader.
+* If the class is from a package imported by the bundle, framework asks for
+exporting bundle for the class.
+* The bundle classpath is searched for the class.
+
+=== OSGi Dependency resolution
+Resolving a bundle may cause the framework to resolve other bundles
+transitively.
+
+If two bundles export the same package (e.g javax.servlet), then the framework
+will favor the highest matching version. What heppens if both bundles export the
+same version, 2.4.0?
+
+In this case, the framework chooses baased on the order in which they were
+installed in the framework. Bundles installed ealier are given priority over
+bundles installed later.
+
+Note: If the servlet API v2.4.0 is already resolved, the framework will choose
+it to resolve the web application's dependency, even though it isn't export hte
+highest version. Done to maximize the potential for collaboration. Bundles can
+only collaborate if they are using the same version of a shared code.
+
