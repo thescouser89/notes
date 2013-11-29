@@ -1,0 +1,7 @@
+== Optimal Scheduling
+----
+OptimalScheduling(I)
+    While(I != 0)
+        accept job j from I with earliest completion date
+        delete j, and any interval which intersects j from I
+----

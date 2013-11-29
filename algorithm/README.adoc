@@ -1,3 +1,7 @@
 == Algorithm Design Manual 2nd Edition
 I'll be reading this book and hopefully posting notes and code snippets for each
 category of algorithms
+
+=== Algorithm vs Heuristics
+Algorithm always produces a correct result, whereas heuristics do a good job
+without providing any guarantee.

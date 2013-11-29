@@ -1,0 +1,25 @@
+== NearestNeighbor(n)
+----
+Visit initial point p~0 from P
+p = p~0
+i = 0
+While there are unvisited points
+ i = i + 1
+ Select p~i -> closest point to p~{i - 1}
+ Visit p~i
+
+Return to point p~0 from p~{ n - 1}
+----
+
+This works well but does not provide the optimal result in a lot of cases.
+
+See closest pair heuristic
+
+e.g
+----
+-21                  -5 -1 0 1  3        11
+----
+
+It you start at 0, you'll jump to 1, -1, 3, -5, 11 then -21.
+
+Optimal solution would be to start at -21 and walk right till your reach 11.
