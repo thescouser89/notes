@@ -307,3 +307,57 @@ it to resolve the web application's dependency, even though it isn't export hte
 highest version. Done to maximize the potential for collaboration. Bundles can
 only collaborate if they are using the same version of a shared code.
 
+Class space:: set of packages visible to a bundle
+
+e.g
+----
+|Tomcat(2.4.0)| <-- |Http client| --> |Http service| --> |Servlet API (2.3.0)|
+----
+Http Client requires servlet v2.4.0 whereas Http service requires servlet
+v2.3.0.
+
+The clas spaces of HTTP client and HTTP service aren't consistent; two different
+versions of javax.servlet are reachable from both. At execution time, this
+results in class cast exceptions when the HTTP service and client bundles interact.
+
+Solution:
+----
+|Tomcat(2.4.0)| <-- |Http client| --> |Http service|  |Servlet API (2.3.0)|
+    |                                       |
+    |                                       |
+    +----------<----------------------------+
+----
+
+Because only one version of javax.servlet is in use, the class spaces are now consistent.
+
+==== Inter vs intra-bundle dependencies
+`uses` directive:: directive used with exported packages. Value is a
+comma-delimited list of packages exposed by the associated exported package.
+
+----
+Export-Package: org.osgi.service.http;
+uses:="javax.servlet"; version="1.0.0"
+Import-Package: javax.servlet; version="2.3.0"
+----
+
+This ensures that the importers of `org.osgi.service.http` also use the same
+`javax.servlet` used by the HTTP service implementation.
+
+This will then happen:
+----
+|Tomcat(2.4.0)| x (can't resolve) x |Http client| --> |Http service| --> |Servlet API (2.3.0)|
+----
+
+But then the framework tries to resolve the dependency:
+----
+|Tomcat(2.4.0)|  |Http client| --> |Http service| --> |Servlet API (2.3.0)|
+                     |                                       |
+                     |                                       |
+                     +---------->----------------------------+
+----
+
+`uses` contraints overly constrains dependency resolution.
+
+
+== Lifecycle
+
