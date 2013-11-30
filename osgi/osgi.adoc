@@ -360,4 +360,81 @@ But then the framework tries to resolve the dependency:
 
 
 == Lifecycle
+OSGi module layer makes sure that class loading happens in a consistent and
+predictable way.
 
+
+=== What is lifecycle management?
+The lifecycle layer allows you to install, start, update, stop, and uninstall
+different bundles externally.
+
+The lifecycle layer also provides programmatic access to bundles so they can
+internally modify their application's configuration at execution time.
+
+In servlet development, the lifecycle of the web application is managed by the
+servlet container.
+
+=== OSGi bundle lifecycle
+The OSGi lifecycle layer is how you use the bundles. The lifecycle layer relies
+on APIs.
+
+The framework doesn't allow an installed bundle to be used until its
+dependencies (Import-Package) are satisfied.
+
+To specify the lifecycle class:
+----
+Bundle-Activator: org.foo.shell.Activator
+----
+
+An activator is necessary if you're creating a bundle and wish to specifically
+interact with the OSGi API orneed to perform custom initialization.
+
+Bundles don't necessarily need to be started in order to do useful things.
+
+==== Bundle Activator API
+[source,java]
+----
+public interface BundleActivator {
+    public void start(BundleContext context) throws Exception;
+    public void stop(BundleContext context) throws Exception;
+}
+----
+
+[source,java]
+----
+public class Activator implements BundleActivator {
+    public void start(BundleContext context) {}
+    public void stopt(BundleContext context) {}
+
+}
+----
+. The activator instance on which start() is called is the same instance on
+which the stop() is called
+. After stop() is called, the activator instance is discarded.
+. If the bundle is restarted, a new activator instance is created.
+
+The activator methods shouldn't do much work. This allows the framework to carry
+on managing other bundles.
+
+==== Bundle Context
+Methods in BundleContext interface can be divided into 2 categories:
+* Deployment and lifecycle Management
+* Bundle interaction via services
+
+For deployment and lifecycle:
+[source,java]
+----
+getProperty(key);
+getBundle();
+installBundle(location, input);
+installBundle(location);
+getBundles();
+addBundleListener(listener);
+removeBundleListener(listener);
+addFrameworkListener(listener);
+removeFrameworkListener(listener);
+----
+
+==== Bundle
+For each installed bundle, the framework creates a Bundle object to logically
+represent it. Most lifecycle operations have a corresponding method in it.
