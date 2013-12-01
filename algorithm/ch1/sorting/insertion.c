@@ -45,3 +45,7 @@ int main(void) {
 
     return 0;
 }
+/**
+ * Analysis of insertion sort is harder because of the inner loop. We'll just
+ * assume it goes around i times.
+ */

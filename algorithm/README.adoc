@@ -1,7 +1,275 @@
-== Algorithm Design Manual 2nd Edition
+= Algorithm Design Manual 2nd Edition
 I'll be reading this book and hopefully posting notes and code snippets for each
 category of algorithms
 
+== Chapter 1
 === Algorithm vs Heuristics
 Algorithm always produces a correct result, whereas heuristics do a good job
 without providing any guarantee.
+
+
+=== Modeling the Problem
+Modeling is formulating your application in terms of precisely described,
+well-understood problems.
+
+Trees:: hierarchical relationships between items
+Graphs:: relationships between arbitrary pair of objects. e.g Networks
+
+Polygons:: regions in some geometric spaces.
+
+
+== Chapter 2: Algorithm Analysis
+=== RAM Model of Computation
+It is a hyptothetical computer called the Random Access Machine.
+
+* Each simple operation (+, -, *, if, call) takes exactly one time step
+* Loops are not considered simple oeprations.
+* Each memory access takes exactly one time step
+
+We measure runtime by counting up the number of steps an algorithm takes on a
+given problem instance.
+
+=== Big Oh Notation
+It ignores the difference between multiplicative constants.
+
+
+----
+O(n) -> upper bound. (Big Oh)
+
+f(n) = O(g(n))
+Condition: f(n) <= c g(n)
+
+
+omega(n) -> lower bound
+
+f(n) = omega(g(n))
+Condition: f(n) >= c g(n)
+
+theta(n) --> upper and lower bound
+
+f(n) = theta(g(n))
+Condition:  c1 g(n) <= f(n) <= c2 g(n)
+----
+
+=== Types of functions
+Constant:: f(n) = 1
+
+Logarithmic:: f(n) = log n
+
+Linear:: f(n) = n
+
+Superlinear:: f(n) = n lg n
+
+Quadratic:: f(n) = n^2
+
+Cubic:: f(n) = n^3
+
+Exponential:: f(n) = c^n
+
+Factorial:: f(n) = n!
+
+n! > 2^n > n^3 > n^2 > nlg n > n > lg n > 1
+
+=== Working with Big Oh
+
+O(f(n)) + O(g(n)) -> O(max(f(n), g(n)))
+omega(f(n)) + omega(g(n)) -> omega(max(f(n), g(n)))
+theta(f(n)) + theta(g(n)) -> theta(max(f(n), g(n)))
+
+
+So, n^3 + n ^2 + n + 1 = O(n^3)
+
+Intuition: At least half the bulk of f(n) + g(n) must come from the larger value
+as n -> inf. Thus, dropping the smaller function from consideration reduces the
+value by at most a factor of half, which is just a multiplicative constant.
+
+Multiplication is like repeated addition (e.g O(c f(n))) -> O(f(n)))
+
+
+O(f(n)) * O(g(n)) -> O(f(n) * g(n))
+omega(f(n)) * omega(g(n)) -> omega(f(n) * g(n))
+theta(f(n)) * theta(g(n)) -> theta(f(n) * g(n))
+
+=== See discussion on insertion and selection sort in their source code
+
+=== String Pattern Matching
+Substring pattern Matching
+
+I: text string t and a pattern string p
+O: Does t contain the pattern p as substring, and if so, where?
+
+[source,C]
+----
+/* t == string, p == substring */
+int findmatch(char *p, char *t) {
+    int i;
+    int j;
+    int m, n;
+
+    m = strlen(p);
+    n = strlen(t);
+
+    for(i = 0; i <= (n-m); i++) {
+        j = 0;
+        while ((j < m) && (t[i + j] == p[j])) {
+            j++;
+        }
+        if (j == m) return i;
+    }
+    return -1;
+}
+----
+O((n-m)(m+2))
+
+m+2 => inner loops run at most m times, (+2 comes from j = 0 and if statement
+inside outer loop)
+
+
+O((n-m)(m+2)) simplifies to O(nm - m^2). Since O() means upper bound, we can get
+rid of the -m^2.
+
+O(nm)
+
+
+=== Matrix multiplication
+----
+for (i = 1; i <= x; ++i) {
+    for(j = 1; j <= y; ++j) {
+        c[i][j] = 0;
+        for(k=1; k <= z; ++k) {
+            c[i][j] += A[i][k] * B[k][j];
+        }
+    }
+}
+----
+O(n^3)
+
+
+=== Logarithms and Their Applications
+==== Binary Search
+O(log n)
+
+A binary tree of height 1 can have up to 2 leaf nodes, while a tree of height 2
+can have up to 4 leaves.
+
+To account for n leaves:
+
+n = 2^h
+
+h = log_2 n
+
+If we want to do a^n, we could do so by:
+
+a^n = (a^(n/2))^2 <- even
+a^n = a(a^(lower(n/2))^2 <- odd
+
+We have halved the size of our exponen at the cost of, at most, two
+multiplications.
+
+So O(lg n) multiplications needed
+
+----
+func power(a, n)
+    if (n = 0) return 1
+    x = power(a, lower(n/2))
+    if (n is even) then return(x^2)
+    else return (a * x ^ 2)
+----
+This illustrates an important principle of divide and conquer. It always pays to
+divide a job as evenly as possible.
+
+
+Logarithms arise whenever things are repeatedly halved or doubled.
+
+== Data Structures
+Data structures can be classified as either contiguous or linked, depending upon
+whether they are based on arrays or pointers.
+
+- Contiguous => array, heaps, hash tables
+
+- Linked => composed of distinct chunks of memory bound together by pointers,
+and include lists, trees, and graph adjacency lists
+
+Advantage of contiguous:
+* Constant-time access given the index
+* Space efficiency
+* Memory locality
+
+Downsize of arrays is that we cannot adjust their size in the middle of a
+program's execution.
+
+
+Pointers:
+[source,C]
+----
+typedef struct list {
+    item_type item;
+    struct list *next;
+} list;
+----
+
+Stack: pust: pop
+Queue: enqueue, deque
+Dictionary: search(k), insert(x), delete(x)
+
+Additional features of dictionary: max, min -> find item with largest key <--
+used in priority queue.
+
+View binary search as a binary tree.
+
+[source,C]
+----
+void tranverse_tree(tree *t) {
+    if (t != NULL) {
+        traverse_tree(t->left);
+        process_item(t->item);
+        traverse_tree(t->right);
+    }
+}
+
+void insert_tree(tree **t, item_type x, tree *parent) {
+    tree *p;
+    if (*t == NULL) {
+        p = malloc(sizeof(tree));
+        p->item = x;
+        p->left = p->right = NULL;
+        p->parent = parent;
+        *t = p;
+        return;
+    }
+
+    if (x < (*t)->item) insert_tree(&((*t)->left), x, *t);
+    else insert_tree(&((*t)->right), x, *t);
+}
+----
+
+Binary trees are good if the tree is perfectly balanced to implement dictionary
+operations (searching, inserting, deleting)
+
+If the user inserts keys in sorted order, this will produce a skinny linear
+height tree where only right pointers are used. [1]
+
+Binary trees can have heights ranging from lg n to n.
+
+[1]: To fix [1], what would be better is an insertion/deletion procedure which
+adjusts the tree a little after each insertion, keeping it close enough to be
+balanced so the maximum height is logarithmic.
+
+==== Priority Queues
+e.g schedule jobs according to their importance relative to other jobs.
+Scheduling requires sorting them by importance, and then evaluating them in this
+sorted order.
+
+Priority queues are data structures that provide more flexibility than simple
+sorting, because they allow new elements to enter a system at arbitrary
+intervals.
+
+insert, find-minimum, find-maximum, delete-minimum, delete-maximum
+
+Dating is the process of extracting the most desirable person from the data
+structure, spending an evening to evaluate them better, and then reinserting
+them into the priority queue with a possibly revised score.
+
+We can implement a priority queue using an unsorted array, a sorted array, or a
+balanced tree. To find the minimum, we can simply create a variable that always
+keeps track of the minimum when we are inserting.
