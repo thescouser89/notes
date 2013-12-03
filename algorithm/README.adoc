@@ -292,3 +292,61 @@ qsort(a, n, sizeof(int), intcompare);
 ----
 
 === Heap Sort
+----
+SelectionSort(A)
+    for i = 1 to n do
+        sort[i] = find-minimum from A
+        Delete-minimum from A
+    return sort
+----
+It takes O(1) time to remove the smallest item from an unsorted array once it
+has been located, but O(n) time to find the smallest item. These are operations
+supported by a priority queue. So let's replace our current data structure with
+a better one! Let's use a heap or a balanced priority queue. Operations now take
+O(log n)
+
+heapsort is nothing but an implementation of selection sort using the right data
+structure.
+
+==== Heaps
+Heaps are awesome for priority queue operations and extract-min. A heap-labeled
+tree is defined such that the key labeling of each node dominates the key
+labeling of its children. In a min-heap, a node dominates its children
+containing a smaller key than they do, while in a max-heap, parent nodes
+dominate by being bigger.
+
+----
+Min-heap
+
+Data: 1492, 1783, 1776, 1804, 1865, 1945, 1963, 1918, 2001, 1941
+
+              1492
+
+     1783             1776
+
+  1804       1865   1945  1963
+1918 2001   1941
+----
+
+===== Constructing heaps
+Heaps can be constructed incrementally, by inserting each new element into the
+left-most open spot in an array, but this does not ensure the dominance ordering
+of the keys.
+
+Solution is to swap any such disattisfied element with its parent. We need to
+bubble up after swapping so that everything is satisfied.
+
+P.S: read more about arrays and binary trees.
+
+Top element is the minimum value. Removing minimum leaves a hole in the array.
+This can be 'solved' by moving the right-most leaf into the first position. Now
+bubble down till the heap structure is satisfied again (heapify).
+
+
+Read more about that!
+There is also a faster insertion sort using same principle.
+
+=== Mergesort
+
+
+
