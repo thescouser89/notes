@@ -273,3 +273,22 @@ them into the priority queue with a possibly revised score.
 We can implement a priority queue using an unsorted array, a sorted array, or a
 balanced tree. To find the minimum, we can simply create a variable that always
 keeps track of the minimum when we are inserting.
+
+
+
+== Sorting and Searching
+[source,C]
+----
+void qsort(void *base, size_t nel, size_t width, int (*compare)(const void *,
+                                                                const void *));
+
+int intcompare(int *i, int *j) {
+    if (*i > *j) return 1;
+    if (*j > *i) return -1;
+    return 0;
+}
+
+qsort(a, n, sizeof(int), intcompare);
+----
+
+=== Heap Sort
