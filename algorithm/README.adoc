@@ -88,14 +88,14 @@ f(n) = O(g(n))
 Condition: f(n) <= c g(n)
 
 
-omega(n) -> lower bound
+Ω(n) -> lower bound
 
-f(n) = omega(g(n))
+f(n) = Ω(g(n))
 Condition: f(n) >= c g(n)
 
-theta(n) --> upper and lower bound
+Θ(n) --> upper and lower bound
 
-f(n) = theta(g(n))
+f(n) = Θ(g(n))
 Condition:  c1 g(n) <= f(n) <= c2 g(n)
 ----
 
@@ -121,8 +121,8 @@ n! > 2^n > n^3 > n^2 > nlg n > n > lg n > 1
 === Working with Big Oh
 
 O(f(n)) + O(g(n)) -> O(max(f(n), g(n)))
-omega(f(n)) + omega(g(n)) -> omega(max(f(n), g(n)))
-theta(f(n)) + theta(g(n)) -> theta(max(f(n), g(n)))
+Ω(f(n)) + Ω(g(n)) -> Ω(max(f(n), g(n)))
+Θ(f(n)) + Θ(g(n)) -> Θ(max(f(n), g(n)))
 
 
 So, n^3 + n ^2 + n + 1 = O(n^3)
@@ -135,8 +135,8 @@ Multiplication is like repeated addition (e.g O(c f(n))) -> O(f(n)))
 
 
 O(f(n)) * O(g(n)) -> O(f(n) * g(n))
-omega(f(n)) * omega(g(n)) -> omega(f(n) * g(n))
-theta(f(n)) * theta(g(n)) -> theta(f(n) * g(n))
+Ω(f(n)) * Ω(g(n)) -> Ω(f(n) * g(n))
+Θ(f(n)) * Θ(g(n)) -> Θ(f(n) * g(n))
 
 === See discussion on insertion and selection sort in their source code
 
