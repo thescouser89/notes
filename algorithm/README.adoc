@@ -292,8 +292,7 @@ whether they are based on arrays or pointers.
 - Linked => composed of distinct chunks of memory bound together by pointers,
 and include lists, trees, and graph adjacency lists
 
-Advantages of contiguous:
-
+Advantages of contiguous
 - Constant-time access given the index
 - Space efficiency
 - Memory locality
