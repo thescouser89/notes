@@ -216,13 +216,13 @@ int findmatch(char *p, char *t) {
 }
 ----
 
-O((n-m)(m+2))
+`O((n-m)(m+2))`
 
 m+2 => inner loops run at most m times, (+2 comes from j = 0 and if statement
 inside outer loop)
 
 
-O((n-m)(m+2)) simplifies to O(nm - m^2). Since O() means upper bound, we can get
+`O((n-m)(m+2))` simplifies to O(nm - m^2^). Since O() means upper bound, we can get
 rid of the -m^2^.
 
 O(nm)
