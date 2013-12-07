@@ -293,6 +293,7 @@ whether they are based on arrays or pointers.
 and include lists, trees, and graph adjacency lists
 
 Advantages of contiguous
+
 - Constant-time access given the index
 - Space efficiency
 - Memory locality
