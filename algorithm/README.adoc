@@ -80,7 +80,6 @@ given problem instance.
 === Big Oh Notation
 It ignores the difference between multiplicative constants.
 
-
 ----
 O(n) -> upper bound. (Big Oh)
 
@@ -96,7 +95,7 @@ Condition: f(n) >= c g(n)
 Θ(n) --> upper and lower bound
 
 f(n) = Θ(g(n))
-Condition:  c1 g(n) <= f(n) <= c2 g(n)
+Condition:  c~1 g(n) <= f(n) <= c~2 g(n)
 ----
 
 === Types of functions
