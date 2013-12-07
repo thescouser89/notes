@@ -258,6 +258,7 @@ h = log~2~ n
 If we want to do a^n^, we could do so by:
 
 a^n^ = (a^(n/2)^)^2^ <- even
+
 a^n^ = a(a^(lower(n/2)^)^2^ <- odd
 
 We have halved the size of our exponen at the cost of, at most, two
