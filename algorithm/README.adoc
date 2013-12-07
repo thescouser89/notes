@@ -311,11 +311,11 @@ typedef struct list {
 } list;
 ----
 
-Stack: pust: pop
-Queue: enqueue, deque
-Dictionary: search(k), insert(x), delete(x)
+Stack:: push: pop
+Queue:: enqueue, deque
+Dictionary:: search(k), insert(x), delete(x)
 
-Additional features of dictionary: max, min -> find item with largest key <--
+Additional features of dictionary:: max, min -> find item with largest key <--
 used in priority queue.
 
 View binary search as a binary tree.
@@ -378,8 +378,7 @@ balanced tree. To find the minimum, we can simply create a variable that always
 keeps track of the minimum when we are inserting.
 
 
-
-== Sorting and Searching
+== Chatper 4: Sorting and Searching
 [source,C]
 ----
 void qsort(void *base, size_t nel, size_t width, int (*compare)(const void *,
