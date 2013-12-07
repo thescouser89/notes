@@ -2,9 +2,9 @@
 ----
 ClosestPair(P)
     let n be the number of points in P
-    for i = i to n - 1 do
+    for i = 1 to n - 1 do
         d = inf
-        for each pair of endpoints (s, t) from distinct vertex chain
+        for each pair of endpoints (s_i, t) from distinct vertex chain
             if (dist(s,t) <= d) s_m = s, t_m = t, d = dist(s,t)
         connect(s_m, t_m) to an edge
     connect the two endpoints by an edge

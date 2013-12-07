@@ -1,12 +1,60 @@
-= Algorithm Design Manual 2nd Edition
+== Book Notes from Algorithm Design Manual 2nd Edition
 I'll be reading this book and hopefully posting notes and code snippets for each
 category of algorithms
 
-== Chapter 1
+== Chapter 1 Introduction to Algorithm Design
+[source,C]
+----
+// insertion sort
+void insertion_sort(int *items, int n) {
+    int i;
+    int j;
+
+    for (i = 1; i < n; ++i) {
+        j = i;
+        while ((j != 0) && (items[j] < items[j - 1])) {
+            swap(&items[j], &items[j - 1]);
+            --j;
+        }
+    }
+}
+----
+
 === Algorithm vs Heuristics
 Algorithm always produces a correct result, whereas heuristics do a good job
 without providing any guarantee.
 
+=== Proof by induction
+Often mathematical induction is the method of choice to prove that an algorithm
+is valid.
+
+You prove a formula for some basis case like 1 or 2, then assume it is true all
+the way till `n - 1` before proving it was true for general _n_ using the
+assumption.
+
+Recursion: program tests whether the input was some basis case 1 or 2. If not,
+solve the bigger case by breaking it into pieces and calling the subprogram
+itself to solve these pieces.
+
+Recursion is mathematical indcution.
+
+Proving the correctness of insertion sort...
+
+- Basis case consists of a single elemnt, and a single element array is
+  completely sorted
+- In general, we can assume that the first `n - 1` elements of array A are
+  completely sorted after `n - 1` iterations of insertion sort
+- To insert one last element x to A, we find where it goes (between biggest
+  element less than or equal to x and the smallest element greater than x). Done
+  by moving all the greater elements back by one position, creating room for x
+  in the desired location.
+
+==== Inductive Proof subtle errors
+- Boundary errors:: greater care is needed to properly deal with the special
+  cases of inserting the minimum or maximum elements
+- Cavallier extension claims:: more common class of error. e.g scheduling
+  problem: adding a new segment might now contain none of the segments of any
+  particular optimal solution prior to insertion
 
 === Modeling the Problem
 Modeling is formulating your application in terms of precisely described,
@@ -347,6 +395,4 @@ Read more about that!
 There is also a faster insertion sort using same principle.
 
 === Mergesort
-
-
 
