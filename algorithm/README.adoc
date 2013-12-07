@@ -191,6 +191,7 @@ bound.
 Substring pattern Matching
 
 I: text string t and a pattern string p
+
 O: Does t contain the pattern p as substring, and if so, where?
 
 [source,C]
