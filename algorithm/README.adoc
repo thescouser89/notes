@@ -2,7 +2,7 @@
 I'll be reading this book and hopefully posting notes and code snippets for each
 category of algorithms
 
-== Chapter 1 Introduction to Algorithm Design
+== Chapter 1: Introduction to Algorithm Design
 [source,C]
 ----
 // insertion sort
@@ -255,13 +255,14 @@ n = 2^h^
 
 h = log~2~ n
 
+==== Exponentiation
 If we want to do a^n^, we could do so by:
 
 a^n^ = (a^(n/2)^)^2^ <- even
 
 a^n^ = a(a^(lower(n/2)^)^2^ <- odd
 
-We have halved the size of our exponen at the cost of, at most, two
+We have halved the size of our exponent at the cost of, at most, two
 multiplications.
 
 So O(lg n) multiplications needed
@@ -273,13 +274,16 @@ func power(a, n)
     if (n is even) then return(x^2)
     else return (a * x ^ 2)
 ----
+
 This illustrates an important principle of divide and conquer. It always pays to
 divide a job as evenly as possible.
 
-
 Logarithms arise whenever things are repeatedly halved or doubled.
 
-== Data Structures
+== Chapter 3: Data Structures
+Changing a data structure in a slow program can work the same way an organ
+transplant does in a sick patient.
+
 Data structures can be classified as either contiguous or linked, depending upon
 whether they are based on arrays or pointers.
 
@@ -289,9 +293,9 @@ whether they are based on arrays or pointers.
 and include lists, trees, and graph adjacency lists
 
 Advantage of contiguous:
-* Constant-time access given the index
-* Space efficiency
-* Memory locality
+- Constant-time access given the index
+- Space efficiency
+- Memory locality
 
 Downsize of arrays is that we cannot adjust their size in the middle of a
 program's execution.
