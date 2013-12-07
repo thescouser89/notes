@@ -99,6 +99,7 @@ Condition:  c~1~ g(n) <= f(n) <= c~2~ g(n)
 ----
 
 === Types of functions
+----
 Constant:: f(n) = 1
 
 Logarithmic:: f(n) = log n
@@ -107,15 +108,16 @@ Linear:: f(n) = n
 
 Superlinear:: f(n) = n lg n
 
-Quadratic:: f(n) = n^2
+Quadratic:: f(n) = n^2^
 
-Cubic:: f(n) = n^3
+Cubic:: f(n) = n^3^
 
-Exponential:: f(n) = c^n
+Exponential:: f(n) = c^n^
 
 Factorial:: f(n) = n!
 
-n! > 2^n > n^3 > n^2 > nlg n > n > lg n > 1
+n! > 2^n^ > n^3^ > n^2^ > n lg(n) > n > lg(n) > 1
+----
 
 === Working with Big Oh
 
@@ -124,20 +126,66 @@ O(f(n)) + O(g(n)) -> O(max(f(n), g(n)))
 Θ(f(n)) + Θ(g(n)) -> Θ(max(f(n), g(n)))
 
 
-So, n^3 + n ^2 + n + 1 = O(n^3)
+So, `n^3^ + n^2^ + n + 1 = O(n^3)`
 
-Intuition: At least half the bulk of f(n) + g(n) must come from the larger value
-as n -> inf. Thus, dropping the smaller function from consideration reduces the
+Intuition: At least half the bulk of `f(n) + g(n)` must come from the larger value
+as `n -> ∞`. Thus, dropping the smaller function from consideration reduces the
 value by at most a factor of half, which is just a multiplicative constant.
 
 Multiplication is like repeated addition (e.g O(c f(n))) -> O(f(n)))
 
-
+----
+# e.g of this kind of multiplication: nested loops
 O(f(n)) * O(g(n)) -> O(f(n) * g(n))
 Ω(f(n)) * Ω(g(n)) -> Ω(f(n) * g(n))
 Θ(f(n)) * Θ(g(n)) -> Θ(f(n) * g(n))
+----
 
 === See discussion on insertion and selection sort in their source code
+[source,C]
+----
+// selection sort
+void selection_sort(int *s, int n) {
+    int i;
+    int j;
+    int min;
+
+    for (i = 0; i < n; ++i) {
+        min = i;
+        for (j = i + 1; j < n; ++j) {
+            /* search for anything smaller than i */
+            if (s[j] < s[min]) {
+                min = j;
+            }
+        }
+        /* swap the smallest item with i */
+        swap(&s[i], &s[min]);
+    }
+}
+/**
+ * e.g
+ * 64 25 12 22 11
+ * 11 25 12 22 64
+ * 11 12 25 22 64
+ * 11 12 22 25 64
+ * 11 12 22 25 64
+ */
+----
+==== Analysis of selection sort
+----
+S(n) = E^n-1^~i=0~  E^n-1^~j=i+1~ 1  = E^n-1^~i=0~ n - i - 1
+S(n) = (n - 1) + (n - 2) + (n - 3) + ... + 2 + 1
+S(n) = n(n - 1) / 2
+----
+
+A basic rule of thumb in Big Oh analysis is that worst-case running time follows
+from multiplying the largest number of times each nested loop can iterate.
+
+e.g insertion sort => it's tricky to analyse the inner loop in the nested loop.
+We could just assume that it runs `i` times.
+
+This crude ``round it up'' analysis always does the job for Big Oh running time
+bound.
 
 === String Pattern Matching
 Substring pattern Matching
@@ -153,8 +201,8 @@ int findmatch(char *p, char *t) {
     int j;
     int m, n;
 
-    m = strlen(p);
-    n = strlen(t);
+    m = strlen(p); /* substring */
+    n = strlen(t); /* string */
 
     for(i = 0; i <= (n-m); i++) {
         j = 0;
@@ -163,9 +211,11 @@ int findmatch(char *p, char *t) {
         }
         if (j == m) return i;
     }
+    /* failed */
     return -1;
 }
 ----
+
 O((n-m)(m+2))
 
 m+2 => inner loops run at most m times, (+2 comes from j = 0 and if statement
@@ -173,7 +223,7 @@ inside outer loop)
 
 
 O((n-m)(m+2)) simplifies to O(nm - m^2). Since O() means upper bound, we can get
-rid of the -m^2.
+rid of the -m^2^.
 
 O(nm)
 
@@ -189,8 +239,7 @@ for (i = 1; i <= x; ++i) {
     }
 }
 ----
-O(n^3)
-
+O(n^3^)
 
 === Logarithms and Their Applications
 ==== Binary Search
