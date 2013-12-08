@@ -378,9 +378,11 @@ balanced tree. To find the minimum, we can simply create a variable that always
 keeps track of the minimum when we are inserting.
 
 
-== Chatper 4: Sorting and Searching
+== Chapter 4: Sorting and Searching
 [source,C]
 ----
+/* e.g of C quicksort algorithm where order is determined by the intcompare
+ * method */
 void qsort(void *base, size_t nel, size_t width, int (*compare)(const void *,
                                                                 const void *));
 
@@ -393,21 +395,24 @@ int intcompare(int *i, int *j) {
 qsort(a, n, sizeof(int), intcompare);
 ----
 
-=== Heap Sort
+=== Heapsort: Fast sorting via Data structures
+
 ----
+/* basic pseudo code of selection sort */
 SelectionSort(A)
     for i = 1 to n do
         sort[i] = find-minimum from A
         Delete-minimum from A
     return sort
 ----
+
 It takes O(1) time to remove the smallest item from an unsorted array once it
 has been located, but O(n) time to find the smallest item. These are operations
 supported by a priority queue. So let's replace our current data structure with
 a better one! Let's use a heap or a balanced priority queue. Operations now take
 O(log n)
 
-heapsort is nothing but an implementation of selection sort using the right data
+Heapsort is nothing but an implementation of selection sort using the right data
 structure.
 
 ==== Heaps
@@ -416,6 +421,54 @@ tree is defined such that the key labeling of each node dominates the key
 labeling of its children. In a min-heap, a node dominates its children
 containing a smaller key than they do, while in a max-heap, parent nodes
 dominate by being bigger.
+
+They work by maintaining a partial order on the set of elements which is weaker
+than the sorted order, yet stronger than random order.
+
+There is no implied ordering between siblings and cousins for an in-order
+traversal.
+
+Heaps are extremely efficient for priority queues.
+
+The most natural implement would involve pointers. However we can store this
+data as an array of keys, and use the position of the keys to implicitly satisfy
+the role of the pointers.
+
+We will store the root of the tree in the first position of the array, and its
+left and right children in teh second and third positions, respectively. We will
+store the 2^n^ keys on the _n_th level. We assume that the array starts with
+index 1.
+
+[source,C]
+----
+typedef struct {
+    item_type q[PQ_SIZE + 1];   /* body of queue */
+    int n;                      /* number of queue elements */
+} priority_queue;
+----
+
+The left child of _k_ sits in position _2k_ and the right child in _2k + 1_,
+while the parent of _k_ holds court in position `lower(n/2)`.
+
+[source,C]
+----
+pq_parent(int n) {
+    if (n == 1) return -1;
+    else retrn ((int) n / 2);
+}
+
+pq_young_clild(int n) {
+    return 2 * n;
+}
+----
+
+This implicit representation of binary trees saves memory, but is less flexible
+than using pointers. We cannot move subtrees around by just changing a single
+pointer. This loss of flexibility means we cannot use this to represent binary
+search trees, but it works just fine for heaps.
+
+We cannot efficiently search for a particular key in a heap since binary search
+does not work because a heap is not a binary search tree.
 
 ----
 Min-heap
@@ -435,18 +488,214 @@ Heaps can be constructed incrementally, by inserting each new element into the
 left-most open spot in an array, but this does not ensure the dominance ordering
 of the keys.
 
-Solution is to swap any such disattisfied element with its parent. We need to
+Solution is to swap any such dissatisfied element with its parent. We need to
 bubble up after swapping so that everything is satisfied.
 
-P.S: read more about arrays and binary trees.
+[source,C]
+----
+pq_insert(priority_queue *q, item_type x) {
+    if (q->n >= PQ_SIZE) {
+        printf("Warning: prioriy queue overflow");
+    } else {
+        q->n = (q->n) + 1;
+        q->q[q->n] = x;
+        bubble_up(q, q->n);
+    }
+}
+
+bubble_up(priority_queue *q, int p) {
+    if(pq_parent(p) == -1) return;
+
+    /* if parent bigger than node */
+    if (q->q[pq_parent(p)] > q->q[p]) {
+        pq_swap(q, p, pq_parent(p));
+        bubble_up(q, pq_parent(p));
+    }
+}
+
+pq_init(priority_queue *q) {
+    q->n = 0;
+}
+
+make_heap(priority_queue *q, item_type s[], int n) {
+    int i;
+    pq_init(q);
+    for(i = 0; i < n; ++i) {
+        pq_insert(q, s[i]);
+    }
+}
+----
+
+Since the height of an n-element heap is lg n, each insertion takes at most
+O(log n) time.
 
 Top element is the minimum value. Removing minimum leaves a hole in the array.
 This can be 'solved' by moving the right-most leaf into the first position. Now
 bubble down till the heap structure is satisfied again (heapify).
 
+[source,C]
+----
+bubble_down(priority_queue *q, int p) {
+    int c;         /* child index */
+    int i;         /* counter */
+    int min_index; /* index of lightest child */
 
-Read more about that!
-There is also a faster insertion sort using same principle.
+    c = pq_young_child(p);
+    min_index = p;
 
-=== Mergesort
+    /* i = 0 and 1, representing child 1 and child 2 */
+    for (i = 0; i <= 1; ++i) {
+        if((c + i) <= q->n) {
+            if (q->q[min_index] > q->q[c + i]) min_index = c + i;
+        }
+    }
+    if (min_index != p) {
+        pq_swap(q, p, min_index);
+        bubble_down(q, min_index);
+    }
+}
+----
 
+Exchanging the maximum element with the last element and calling heapify
+repeatedly gives an O(n log n) sorting algorithm, named Heapsort
+
+[source,C]
+----
+heapsort(item_type s[], int n) {
+    int i;              /* counters */
+    priority_queue q;   /* heap for heapsort */
+
+    make_heap(&q, s, n);
+
+    for(i = 1; i < n; ++i) {
+        s[i] = extract_min(&q);
+    }
+}
+----
+Remember how in selection sort we always try to find the minimum, then swapping.
+Very similar concept.
+
+==== Faster Heap Construction
+We usually construct our heap by using `bubble_up`. Surprisingly, heaps can be
+constructed even faster by using our `bubble_down` procedure and some clever
+analysis.
+
+[source,C]
+----
+make_heap(priority_queue *q, item_type s[], int n) {
+    int i;          /* counter */
+
+    q->n = n;
+    for (i = 0; i < n; ++i) q->q[i + 1] = s[i];
+    for (i = q->n; i >= 1; i--) bubble_down(q, i);
+}
+----
+At first it seems it would take O(n log n)... analysis pg 128.
+
+=== Sorting by incremental insertion
+Select an arbitrary element from the unsorted set, and put it in the proper
+position in the sorted set.
+
+e.g insertion sort
+
+Insertion sort is perhaps the simplest example of the incremental insertion
+technique, where we build up a complicated structure on _n_ items by first
+building it on n - 1 items and then making the necessary changes to add the last
+item.
+
+Use more efficient data strucutures help here. e.g balanced search tree.
+
+=== Mergesort: Sorting by Divide-and-Conquer
+
+----
+MergeSort(A[1, n])
+    Merge(MergeSort(A[1, lower(n/2)]), MergeSort(A[lower(n/2) + 1, n]))
+----
+
+The basis case of the recursion occurs when the subarray to be sorted consists
+of a single element.
+
+The efficiency of mergesort depends upon how efficiently we combine the two
+sorted halves into a single sorted list.
+
+Mergesort is a great algorithm for sorting linked lists, because it does not
+rely on random access to elements as does heapsort or quicksort. Its primary
+disadvantage is the need for an auxilliary buffer when sorting arrays.
+
+[source,C]
+----
+merge(item_type s[], int low, int middle, int high) {
+    int i;                  /* counter */
+    queue buffer1, buffer2; /* buffers to hold elements for merging */
+
+    init_queue(&buffer1);
+    init_queue(&buffer2);
+
+    for(i = low; i <= middle; i++) enqueue(&buffer1, s[i]);
+    for(i = middle + 1; i <= high; i++) enqueue(&buffer2, s[i]);
+
+    i = low;
+
+    while(!(empty_queue(&buffer1)|| empty_queue(&buffer2))) {
+        if(headq(&buffer1) <= headq(&buffer2))
+            s[i++] = dequeue(&buffer1);
+        else
+            s[i++] = dequeue(&buffer2);
+    }
+
+    /* only one of those should actually run */
+    while(!empty_queue(&buffer1)) s[i++] = dequeue(&buffer1);
+    while(!empty_queue(&buffer2)) s[i++] = dequeue(&buffer2);
+}
+----
+
+=== Quicksort: Sorting by Randomization
+Suppose we select a random item _p_ from the _n_ items we seek to sort.
+Quicksort separates the _n - 1_ other items into two piles: a low pile
+containing all the elements that appear before _p_ in sorted order and a high
+pile containing all the elements that appear after _p_ in sorted order.
+
+Such paritioning buys us two things. First, the pivot element _p_ ends up in the
+exact array position it will reside in the final sorted order. Second, after
+paritioning, no element flops to the other side in the final sorted order. Thus
+we can now sort the elements to the left and the right of the pivot
+independently.
+
+[source,C]
+----
+quicksort(item_type s[], int l, int h) {
+    int p;
+
+    if ((h - l) > 0) {
+        p = partition(s, l, h);
+        quicksort(s, l, p - 1);
+        quicksort(s, p + 1, h);
+    }
+}
+----
+
+We can partition the array in one linear scan for a particular pivot element by
+maintaining three sections of the array: less than the pivot (to the left of
+firsthigh), greater than or equal to the pivot (between firsthigh and i), and
+unexplored (to the right of i).
+
+[source,C]
+----
+int partition(item_type s[], int l, int h) {
+    int i;          /* counter */
+    int p;          /* pivot element index */
+    int firsthigh;  /* divider position for pivot element */
+
+    p = h;
+    firsthigh = l;
+
+    for (i = l; i < h; i++) {
+        if (s[i] < s[p]) {
+            swap(&s[i], &s[firsthigh]);
+            firsthigh++;
+        }
+    }
+    swap(&s[p], &s[firsthigh]);
+    return(firsthigh);
+}
+----
