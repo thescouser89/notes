@@ -681,21 +681,129 @@ unexplored (to the right of i).
 
 [source,C]
 ----
+/* this is the in-place version */
 int partition(item_type s[], int l, int h) {
     int i;          /* counter */
     int p;          /* pivot element index */
     int firsthigh;  /* divider position for pivot element */
 
     p = h;
+    /* firsthigh tracks the item bigger than the pivot */
     firsthigh = l;
 
+    /* s[p] is our pivot value */
     for (i = l; i < h; i++) {
         if (s[i] < s[p]) {
             swap(&s[i], &s[firsthigh]);
+            /* only increment firsthigh if swapped */
             firsthigh++;
         }
     }
+    /* move pivot to correct position */
     swap(&s[p], &s[firsthigh]);
     return(firsthigh);
 }
 ----
+
+If we consistently gets unlucky, the pivot always splits the array as
+unequally as possible, i.e pivot is always largest or smallest number. We are
+left with _n - 1_ subproblems. We'll end up with worse-case  Θ(n^2^)
+
+==== Intuition: Expected case for Quicksort
+Expected performance depends on the height of the partition tree. Whenever the
+pivot is near the center of the sorted array, we get a good split and realize
+the same performance as mergesort.
+
+The best possible selection for the pivot would be the median key. But we only
+have probability 1/n of selecting this key.
+
+Suppose that a key is good enough pivot that it is ranked n/4 to 3n/4 in the
+space of all keys sorted. Thus, on average we pick a good enough pivot with
+probability 1/2.
+
+On average, random quicksort partition trees are very good.
+
+=== Randomized algorithms
+Now suppose we add an initial step to our algorithm where we randomly permute
+the order of the _n_ elements before we try to sort them. Such a permutation can
+be constructed in O(n) time.
+
+Randomization is a good tool to improve algorithms with bad worst-case but good
+average-case complexity.
+
+=== Is quicksort really quick?
+The RAM model and Big Oh analysis provide too coarse a set of tools to make the
+type of distinction. Experiments show that quicksort is two or three times
+faster than mergesort or heapsort. The primary reason is that the operations in
+the inner loop are simpler.
+
+=== Distribution Sort: Sorting via Bucketing
+We could sort names for a telephone book by partitioning them according to the
+first letter of the last name. This will create 26 different piles, or buckets,
+of names. We can then proceed to sort each pile individually and just
+concatenate the bunch at the end.
+
+If the names are distributed evenly among the buckets, the resulting 26 problems
+should each be substantially smaller than the original problem. Further, by now
+partitioning each pile based on the second letter, we generate smaller and
+smaller piles.
+
+Bucketing is effective when we know the distribution of data will be roughly
+uniform.
+
+=== Lower bounds for sorting
+To sort n items, we have to look at the n items, so the lower bound will be
+Ω(n).
+
+Continued discussion pg 130.
+
+
+=== Divide and Conquer
+One of the most powerful techniques for solving problems is to break them down
+into smaller, more easily solved pieces.
+
+== Chapter 5: Graph Traversal
+A graph G = (V, E) consists of a set of vertices V together with a set E of
+vertex pairs or edges. Graphs are important because they can be used to
+represent essentially any relationship.
+
+The key to solving many algorithmic problems is to think of them in terms of graphs.
+
+The key to using graph algorithms effectively in applications lies in correctly
+modeling your problem so you can take advantage of existing algorithms.
+
+
+=== Flavors of graphs
+Properties of Graphs
+
+- Undirected vs directed
+  edge (x, y) implies (y, x) for undirected edges.
+
+- Weighted vs Unweighted
+  Each edge is assigned a numerical value, or weight. The edges of a road
+  network might be weighted with their length, drive-time, or speed limit,
+  depending upon the application.
+
+  Difference between weighted and unweighted graphs is important when finding
+  the shortest path.
+
+- Simple vs non-simple
+  Certain types of edges complicate the task of working with graphs. A
+  _self-loop_ is an edge (x, x) involving one vertex. An edge (x, y) is a
+  multiedge if it occurs more than once in the graph.
+
+- Sparse vs Dense
+
+- Cyclic vs Acyclic
+  An acyclic graph does not contain any cycles. e.g Trees.
+
+- Embedded vs topological
+  A graph is embedded if the vertices and edges are assigned geometric positions.
+
+- Implicit vs explicit
+  Certain graphs are not explicitly constructed and then traversed, but built as
+  we use them. A good example is the backtrack search.
+
+- Labeled vs unlabeled
+  Each vertex is assigned a unique name or identifier in a labeled graph to
+  distinguish it from all other vertices.
