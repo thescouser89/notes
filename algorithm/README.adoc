@@ -807,3 +807,103 @@ Properties of Graphs
 - Labeled vs unlabeled
   Each vertex is assigned a unique name or identifier in a labeled graph to
   distinguish it from all other vertices.
+
+
+=== Data Structures for Graphs
+Adjacency matrix::
+We can represent G using an _n x n_ matrix M, where element M[i, j] = 1 if
+(i,j) is an edge of G, and 0 if it isn't.
+
+Adjacency list::
+We can more efficiently represent sparse graphs by using linked lists to store
+the neighbors adjacent to each vertex. Adjacency lists make it harder to verify
+whether a given edge (i, j) is in G, since we must search through the
+appropriate list to find the edge.
+
+Adjacency lists are the right data structure for most applications of graphs.
+
+[source,C]
+----
+#define MAXV 1000       /* max number of vertices */
+
+/* We represent directed edge (x, y) by an edgenode y in x's adjacency list. The
+ * degree field counts the number of meaningful entries for each vertex.
+ */
+typedef struct {
+    int y;                  /* adjacency info */
+    int weight;             /* edge weight, if any */
+    struct edgenode *next;  /* next edge in list */
+} edgenode;
+
+typedef struct {
+    edgenode *edges[MAXV + 1];  /* adjacency info */
+    int degree[MAXV + 1];       /* outdegree of each vertex */
+    int nvertices;              /* number of vertices in graph */
+    int nedges;                 /* number of edges in graph */
+    bool directed;              /* is the edge directed? */
+}
+
+
+initialize_graph(graph *g, bool directed) {
+    int i;      /* counter */
+    g->nvertices = 0;
+    g->nedges = 0;
+    g->directed = directed;
+
+    for (i = 1; i <= MAXV; i++) g->degree[i] = 0;
+    for (i = 1; i <= MAXV; i++) g->edges[i] = NULL;
+}
+
+read_graph(graph *g, bool directed) {
+    int i;      /* counter */
+    int m;      /* number of edges */
+    int x, y;   /* vertices in edge (x, y) */
+
+    initialize_graph(g, directed);
+
+    scanf("%d %d", &(g->nvertices), &m);
+
+    for (i = 1; i <= m; i++) {
+        scanf("%d %d", &x, &y);
+        insert_edge(g, x, y, directed);
+    }
+}
+
+insert_edge(graph *g, int x, int y, bool directed) {
+    edgenode *p;                    /* temporary pointer */
+
+    p = malloc(sizeof(edgenode));   /* allocate edgenode storage */
+
+    p->weight = NULL;
+    p->y = y;
+    p->next = g->edges[x];
+
+    g->edges[x] = p;                /* insert at head of list */
+    g->degree[x]++;
+
+    if (directed == FALSE) {
+        insert_edge(g, y, x, TRUE);
+    } else {
+        g->nedges++;
+    }
+}
+
+print_graph(graph *g) {
+    int i;          /* counter */
+    edgenode *p;    /* temporary pointer */
+
+    for (i = 1; i <= g->nvertices; i++) {
+        printf("%d: ", i);
+        p = g->edges[i];
+
+        while (p != NULL) {
+            printf(" %d", p->y);
+            p = p->next;
+        }
+        printf("\n");
+    }
+}
+----
+
+=== Traversing a Graph
+pg 173
