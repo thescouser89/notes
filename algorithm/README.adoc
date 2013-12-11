@@ -906,4 +906,51 @@ print_graph(graph *g) {
 ----
 
 === Traversing a Graph
-pg 173
+Mazes are naturally represented by graphs. For efficiency, we must make sure
+that we don't get trapped in the maze and visit the same place repeatedly. For
+correctness, we must do the traversal in a systematic way to guarantee that we
+get out of the maze.
+
+The key idea behind graph traversal is to mark each vertex when we first visit
+it and keep track of what we have not yet completely explored.
+
+Each vertex will exist in one of the three states.
+
+- undiscovered - initial state
+- discovered - found, but not yet checked out all incident angles
+- processed - vertex after we have visited all incident edges
+
+We must also maintain a structure containing the vertices that we have
+discovered but not yet completely processed.
+
+=== Breadth-First Search
+At some point during the course of the traversal, every node in the graph
+changes state from undiscovered to discovered. In a breadth-first search of an
+undirected graph, we assign a direction to each edge, from the discoverer _u_ to
+the discovered _v_. We thus denote _u_ to be the parent of _v_. Breadth-first
+search are very useful in shortest path problems.
+
+----
+# s is parent(?)
+BFS(G, s)
+    for each vertex u E V[G] - {s} do
+        state[u] = "undiscovered"
+        p[u] = nil # no parent is in the BFS tree
+
+    state[s] = "discovered"
+    p[s] = nil
+    Q = {s}
+    while Q != nil:
+        u = dequeue[Q]
+        process vertex u as desired
+        for each v E Adj(u) do
+            process edge(u, v) as desired
+            if state[v] = "discovered":
+                p[v] = u
+                enqueue[Q, v]
+            state[u] = "processed"
+----
+
+
+=== Depth-First search
+pg 181

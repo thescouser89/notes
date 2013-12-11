@@ -30,7 +30,7 @@ first version it finds.
 
 Classpath hell:: More than one Jar file provides a given set of classes
 
-You might suffer frm `NoSuchMethodError` when a class from one Jar file uses a
+You might suffer from `NoSuchMethodError` when a class from one Jar file uses a
 class with a different version from what it was expecting.
 
 In large application, it isn't uncommon to have dependencies on different
@@ -45,7 +45,7 @@ deployment. (e.g dynamic plugin mechanism)
 * OSGi standard services
 
 The framework is the runtime and implements the OSGI functionality.
-The sservices define APIs for common tasks, such as logging and preferences.
+The services define APIs for common tasks, such as logging and preferences.
 
 === OSGi layers
 * Module layer
