@@ -953,4 +953,46 @@ BFS(G, s)
 
 
 === Depth-First search
-pg 181
+Difference between BFS and DFS results in the order in which they explore
+vertices. This order depends entirely upon the container structure used to store
+the discovered but not processed vertices.
+
+- Queue: we explored the oldest unexplored vertices first. Thus we start from
+  starting vertex -> Breadth-first
+
+- Stack: We visit a new neighbor if one is available, and backing only when we
+  are surrounded by previously discovered vertices. -> Depth-first
+
+----
+# Our time clock ticks each time we enter or exit any vertex.
+DFS(G, u)
+    state[u] = "discovered"
+    process vertex u if desired
+    entry[u] = time
+    time = time + 1
+
+    for each v E Adj(u) do
+        process edge(u, v) as desired
+        if state[v] = "undiscovered" then
+            p[v] = u
+            DFS(G, v)
+        state[u] = "processed"
+        exit[u] = time
+        time = time + 1
+----
+The time interval is useful to know the ancestor and descendants.
+Time difference between entry and exit values can give an indication of the
+number of descendents of _v_.
+
+The other important property of DFS is that it partitions the edges of
+undirected graph into exactly two classes: tree edges and and back edges.
+
+The tree edges discover new vertices, and are those encoded in the parent
+relation.
+
+Back edges are those whose other endpoint is an ancestor of the vertex being
+expanded, so they point back to the tree.
+
+DFS organizes vertices by entry/exit times, and edges into tree and back edges.
+
+=== Depth-First Search on Directed Graphs
