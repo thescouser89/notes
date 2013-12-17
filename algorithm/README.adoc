@@ -996,3 +996,64 @@ expanded, so they point back to the tree.
 DFS organizes vertices by entry/exit times, and edges into tree and back edges.
 
 === Depth-First Search on Directed Graphs
+DFS on an undirected graph proves useful because it organizes the edges of the
+graph in a very precise way.
+
+When traversing undirected graphs, every edge is either in the DFS tree or back
+tree to an ancestor in the tree.
+
+[continued pg 191]
+
+=== Topological Sorting
+
+DAG:: Directed acyclic graph
+
+Topological sorting orders the vertices on a line such that all directed edges
+go from left to right. Such an ordering cannot exist if a graph contains a
+directed cycle.
+
+The importance of topological sorting is that it gives us an ordering to process
+each vertex before any of its successors.
+
+Suppose the edges represented precedence constraints, such that edge (x, y)
+means job x must be done before job y. Then, any topological sort defines a
+legal schedule.
+
+[continued pg 192]
+
+== Chapter 6: Weighted Graph Algorithms
+There is an alternate universe of problems for weighted graphs. The edges of
+road networks are naturally bound to numerical values such as construction cost,
+traversal time, length, or speed limit.
+
+=== Minimum Spanning Trees
+A spanning tree of a graph G = (V, E) is a subset of edges from E forming a tree
+connecting all vertices of V. For edge-weighted graphs, we are particularly
+interested in the minimum spanning tree - the spanning tree whose sum of edge
+weithgts is as small as possible.
+
+Minimum spanning trees are the answer whenever we need to connect a set of
+points (representing cities, homes, junctions, or other locations) by the
+smallest amound of roadway, wire, or pipe.
+
+The minimum spanning tree is the smallest connected graph in terms of edge
+weight.
+
+=== Prim's Algorithm
+Prim's minimum spanning tree algorithm starts from one vertex and grows the rest
+of the tree one edge at a time until all vertices are included.
+
+Greedy algorithms make the decision of what to do next by selecting the best
+local option from all available choices without regard to the global structure.
+The natural greedy algorithm for minimum spanning tree repeatedly selects the
+smallest weight edge that will enlarge the number of vertices in the tree.
+
+----
+Prim-MST(G)
+    select an arbitrary vertex s to start the tree from
+    while (there are still nontree vertices)
+        select the edge of minimum weight between a tree and nontree vertex
+        Add the selected edge and vertex to the tree T~prim~.
+----
+
+pg 205
