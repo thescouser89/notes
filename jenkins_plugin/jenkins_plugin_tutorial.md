@@ -317,5 +317,56 @@ The warning method will return a message in brownish yellow warning icon.
 Some of the configuration extension could be global. That will go into the
 Hudson's Global configuration page.
 
+For Hudson to include the global configuration of an extension in its global
+configuration, it must be placed in a file called `global.jelly`.
+
+`org/sample/hudson/HelloWorldBuilder/global.jelly`
+
+In `global.jelly`, the checkbox is defined as:
+```xml
+<f:section title="Hello World Builder">
+    <f:entry title="French" description="Check if we should say hello in French"
+             help="/plugin/javaone-sample/help-globalConfig.html">
+        <f:checkbox name="hello_world.useFrench"
+                    checked="${descriptor.useFrench()}" />
+    </f:entry>
+</f:section>
+```
+
+The Jexl expression `${descriptor.useFrench()} would resolve to
+`HelloBuilder.DescriptorImpl.useFrench()` which is defined as:
+
+```java
+public boolean useFrench() {
+    return useFrench;
+}
+```
+
+Once the global configuration is submitted, by convention Hudson would call the
+`HelloBuilder.Descriptor.configure` passing a `JSONObject`. It is up to the
+extension to find its submitted value and use it.
+
+```java
+@Override
+public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
+    useFrench = formData.getBoolean("useFrench");
+    save();
+    return super.configure(req, formData);
+}
+```
+
+## Loading and Saving the global configurations
+Your extension must do the work of loading and saving the global configurations.
+Saving is done by calling the method `save()`.
+
+To load the global configuration, the Descriptor must include a call to the
+method `load()`.
+
+
+## Extension point description
+http://wiki.hudson-ci.org/display/HUDSON/Extension+points
+
+
+## Plugin Architecture
 
 [first_hudson_plugin]: http://wiki.eclipse.org/Hudson-ci/writing-first-hudson-plugin
