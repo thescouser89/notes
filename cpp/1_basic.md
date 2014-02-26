@@ -168,5 +168,3 @@ if (answer == 'y') {
     return true;
 }
 ```
-
-## User Defined Types
