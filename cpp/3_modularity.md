@@ -14,7 +14,7 @@ class Vector {
     int s2;
 };
 ```
-The key point is that the funtion definitions are 'elsewhere'.
+The key point is that the function definitions are 'elsewhere'.
 
 ```cpp
 Vector::Vector(int s): elem{new double[s]}, s2{s} {}
