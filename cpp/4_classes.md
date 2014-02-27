@@ -139,3 +139,19 @@ The `std::initializer_list` used to define the initializer-list constructro is a
 standard-library type known to the compiler: when we use a {}-list, such as {1,
 2}, the compiler will create an object of type `initializer_list` to give to the
 program.
+
+```dpp
+Vector v1 = {1, 2, 3, 4, 5};
+
+Vector::Vector(std::initializer_list<double> lst)
+    : elem{ new double[lst.size()]}, sz{static_cast<int>(lst.size())} {
+        copy(lst.begin(), lst.end(), elem); // copy from lst into elem
+}
+
+```
+`static_cast` is used to convert the size of the initializer list into an int.
+This is done because there is a tiny chance that the number of elements in the
+list is larger than the largest integer.
+
+## Abstract Types
+49
