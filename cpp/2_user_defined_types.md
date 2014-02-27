@@ -10,7 +10,7 @@ Organize the elements it needs into a data structure, a _struct_:
 struct Vector {
     int s2;
     double* elem;
-}
+};
 ```
 
 A variable of type `Vector` can be defined like this:
@@ -64,7 +64,7 @@ class Vector {
     private:
     double* elem;
     int s2;
-}
+};
 
 Vector v(6); // a vector with 6 elements
 ```
@@ -99,7 +99,7 @@ struct Entry {
     Type t;
     char* s;
     int i;
-}
+};
 
 void f(Entry* p) {
     if (p->t == str) {
@@ -110,7 +110,7 @@ void f(Entry* p) {
 union Value {
     char* s;
     int i
-}
+};
 ```
 
 The language does not keep track of which kind of value is held by a union, so
