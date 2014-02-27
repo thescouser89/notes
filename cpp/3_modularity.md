@@ -61,7 +61,7 @@ Vector::Vector(int s): elem{new double[s]}, s2{s} {}
 // rest of it here
 ```
 
-THe code in `user.cpp` and `Vector.cpp` shares the `Vector` interface
+The code in `user.cpp` and `Vector.cpp` shares the `Vector` interface
 information provided in `Vector.h`, but the 2 files can be separately compiled.
 
 
@@ -111,7 +111,7 @@ double& Vector::operator[](int i) {
 }
 ```
 
-THe implementation will unwind the function call stack to get back to the
+The implementation will unwind the function call stack to get back to the
 context of that caller.
 
 ```cpp
@@ -120,7 +120,7 @@ try {
 } catch (out_of_range) {}
 ```
 
-The `out_of_range` type is defined in the standard library (in <stdexcept>).
+The `out_of_range` type is defined in the standard library (in `<stdexcept>`).
 
 A function that should never throw an exception can be declared `noexcept`.
 
