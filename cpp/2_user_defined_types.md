@@ -1,5 +1,5 @@
 C++ augments the built-in types and operations with a set of abstraction
-mechanisms. THey are designed to allow programmers to use their own types. These
+mechanisms. They are designed to allow programmers to use their own types. These
 types are called user-defined types. They are referred as classes and
 enumerations.
 
@@ -74,7 +74,7 @@ number of elements (s2).
 
 A 'function' with the same name as its clas is called a _constructor_.
 
-The constructor `Vector(int) initializes the `Vector` members using a member
+The constructor `Vector(int)` initializes the `Vector` members using a member
 initializer list:
 
 ```cpp
@@ -88,7 +88,7 @@ There is no fundamental difference between a `struct` and a `class`: a struct is
 simply a class with members public by default.
 
 ## Unions
-A union i a struct in which all members are allocated at the same address so
+A union is a struct in which all members are allocated at the same address so
 that the `union` occupies only as much space as its largest member.
 
 ```cpp
@@ -113,7 +113,7 @@ union Value {
 }
 ```
 
-THe language does not keep track of which kind of value is held by a union, so
+The language does not keep track of which kind of value is held by a union, so
 the programmer must do that.
 
 ## Enumerations
@@ -128,14 +128,14 @@ Color col = Color::red;
 Traffic_light light = Traffic_light::red;
 ```
 
-Note that enumerators are in the scope of their `enum` class, Color::red is
-different from Traffic_light::red.
+Note that enumerators are in the scope of their `enum` class, `Color::red` is
+different from `Traffic_light::red`.
 
 Enumerations are used to represent small sets of integer values.
 
 The `class` after the `enum` specifies that an enumeration is strongly typed and
 that its enumerators are scoped. `enum classes` help prevent accidental missues
-of constants. We cannot mix Traffic_light and Color values.
+of constants. We cannot mix `Traffic_light` and `Color` values.
 
 ```cpp
 int i = Color::red; // error
