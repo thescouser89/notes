@@ -88,6 +88,7 @@ An object created by `new` lives until destroyed by `delete`.
 
 # Constants
 C++ supports two notions of immutability:
+
 `const`
 :: promise not to change this value. Data can be passed to functions without
    fear of it being modified.
@@ -96,9 +97,9 @@ C++ supports two notions of immutability:
 :: meaning roughly "to be evaluated at compile time".
 
 ```cpp
-int const dmv = 17;
+const int dmv = 17;
 int var = 17;
-constexpr double max1 = 1.4 * sqyare(dmv); // ok if square(17) is a const expression
+constexpr double max1 = 1.4 * square(dmv); // ok if square(17) is a const expression
 constexpr double max2 = 1.4 * square(var); // not ok since var is not constant
 const double max3 = 1.4 * square(var);     // ok, may be evaluated at runtime
 ```
@@ -108,7 +109,7 @@ For a function to be usable in a constant expression, it must be defined with
 
 ```cpp
 constexpr double square(double x) {
-    return x * x;:w
+    return x * x;
 }
 ```
 To be `constexpr`, a function must be rather simple.
