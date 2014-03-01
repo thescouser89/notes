@@ -154,4 +154,227 @@ This is done because there is a tiny chance that the number of elements in the
 list is larger than the largest integer.
 
 ## Abstract Types
-49
+An abstract type is a type that completely insulates a user from implementation
+details. To do that, we decouple the interface from the representation.
+
+Since we don't know anything abou thte representation of an abstract type, we
+must allocate objects on the free store, and access them through references or
+pointers.
+
+```cpp
+class Container {
+    public:
+    virtual double& operator[](int) = 0;
+    virtual int size() const = 0;
+    virtual ~Container() {}
+};
+```
+The word `virtual` means may be redefined later in a class derived from this
+one. A class derived from Container provides an implementation for the Container
+interface.
+
+The `= 0` syntax says the function is pure _virtual_; i.e some class derived
+from Container must define the function.
+
+A class with a pure virtual function is called an abstract class.
+
+```cpp
+void use(Container& c) {
+    const int sz = c.size();
+
+    for (int i = 0; i != sz; ++i) {
+        cout << c[i] << '\n';
+    }
+}
+```
+```cpp
+class Vector_container: public Container {
+    Vector v;
+
+    public:
+    Vector_container(int s): v(s) {}
+    ~Vector_container() {}
+
+    double& operator[](int i) { return v[i]; }
+    int size() const { return v.size(); }
+};
+```
+
+The `:public` can be read as 'is derived from' or 'is a subtype of'. Class
+Vector_container is said to be derived from class Container, and class Container
+is said to be a base of class Vector_container.
+
+To achieve the virtual properties, a Container object must contain information
+to allow it to select the right function to call at runtime.
+
+The usual implementation technique is for the compiler to convert the name of a
+virtual function into an index into a table of pointers to functions.
+That table is usually called the virtual function table (`vtbl`).
+
+The functions in the `vtbl` allow the object to be used correctly even when the
+size of the object and the layout of its data are unknown to the caller.
+
+The virtual call mechanism can be made almost as efficient as the normal
+function call mechanism.
+
+## Class Hierarchies
+The container example is a very simple example of a class hierarchy. We use
+class hierarchies to represent concepts that have hierarchical relationships.
+
+Shape -> Circle
+ |
+ |
+Triangle
+
+```cpp
+class Shape {
+    public:
+    virtual Point center() const = 0;
+    virtual void move(Point to) = 0;
+
+    virtual void draw() const = 0;
+    virtual void rotate(int angle) = 0;
+
+    virtual ~Shape() {}
+};
+
+class Circle: public Shape {
+    public:
+    Circle(Point p, int rr);
+    Point center() const { return x; }
+    void move(Point to) { x = to; }
+    void draw() const;
+    void rotate(int) {}
+
+    private:
+    Point x;
+    int r;
+};
+
+class Smiley: public Circle {
+    public:
+    Smiley(Point p, int r): Circle {p, r}, mouth{nullptr} {}
+
+    ~Smiley() {
+        delete mouth;
+        for (auto p: eyes) delete p;
+    }
+    void move(Point to);
+    void draw() const;
+    void rotate(int);
+
+    void add_eye(Shape* s) { eyes.push_back(s); }
+    void set_mouth(Shape* s);
+    virtual void wink(int i);
+
+    private:
+    vector<Shape*> eyes;
+    Shape* mouth;
+};
+```
+
+### Explicit Overriding
+A programmer can explicitly state that a function is meant to override.
+
+```cpp
+boid move(Point to) override;
+```
+
+We can ask 'is this Shape a kind of Smiley?' using the `dynamic_cast` operator:
+
+```cpp
+if (Smiley* p = dynamic_cast<Smiley*>(ps)) {}
+```
+
+If the object pointed by the argument of `dynamic_cast` is not of the expected
+type, `dynamic_cast` returns `nullptr`.
+
+### Avoiding Resource Leaks
+Functions returning a pointer to an object allocated on the free store are
+dangerous. One solution is to return a standard-library `unique_ptr` rather than
+a 'naked pointer' and store `unique_ptrs` in the container:
+
+```cpp
+unique_ptr<Shape> read_shape(istream &is) {
+    //
+    return unique_ptr<Shape> {new Circle {p, r}};
+}
+```
+Now the object is owned by `unique_ptr` which will `delete` the object when it
+is no longer needed, i.e when its `unique_ptr` goes out of scope.
+
+## Copy and Move
+By default, objects are copied.
+
+```cpp
+void test(complex z1) {
+    complex z2 {z1}; // copy initialization
+    complex z3;
+    z3 = z2; // copy assignment
+}
+```
+
+z1, z2, and z3 have the same value because both the assignments and the
+initialization copied both members.
+
+For simple concrete types, memberwise copy is often exactly the right semantics
+for copy. For some sophisticated concrete types, like Vector, memberwise copy is
+not the right semantics, and for abstract types it almost never is.
+
+### Copying containers
+```cpp
+void bad_copy(Vector v1) {
+    Vector v2 = v1;
+    v1[0] = 2;
+    v2[1] = 3;
+}
+```
+
+v1 and v2 points to the same underlying part.
+
+Copying of an object of a class is defined by two members: a copy constructor
+and a copy assignment.
+
+```cpp
+class Vector {
+    //
+    Vector(const Vector& a); // copy constructor
+    Vector& operator=(const Vector& a); // copy assignment
+}
+```
+
+A suitable definition of a copy constructor for Vector allocates the space for
+the required number of elements and then copies the elements into it, so that
+after a copy each Vector has its own copy of the elements.
+
+The name `this` is predefined in a member function and points to the object for
+which the member function is called.
+
+### Moving Containers
+We can control copying by defining a copy constructor and a copy assignment, but
+copying can be costly for large containers. We avoid the cost of copying when we
+pass objects to a function by using references, but we can't return a reference
+to a local object as the result. (the local object could be destroyed by the
+time the caller got a chance to look at it)
+
+```cpp
+class Vector {
+    Vector& operator=(Vector&& a); // move assignment
+}
+
+Vector:: Vector(Vector&& a): elem {a.elem}, sz{z.sz} {
+    a.elem = nullptr;
+    a.sz = 0;
+}
+```
+
+After a move, a moved-from object should be in a state that allows a destructor
+to be run.
+
+```cpp
+y = std::move(x); // explicit move
+return y; // implicit move
+```
+
+### Essential Operations
+[not really covered]
